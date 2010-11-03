@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
 
   s.summary     = 'Data structures for a more functional programming style.'
   s.description = %q{
-  A collection of lazy and persistent data structures and mixin for
+  A collection of lazy and persistent data structures and mixins for
   Ruby that provide support for a more functional programming style.
 
   Lazy evaluation is a technique in which computations are deferred
