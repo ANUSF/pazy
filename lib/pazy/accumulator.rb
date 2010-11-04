@@ -3,7 +3,7 @@ require 'pazy/list'
 require 'pazy/hash_map'
 
 # This helper class allows us to implement traversal methods in a
-# functional without relying on mutable state. It maintains a set
+# functional way without relying on mutable state. It maintains a set
 # of 'marked' (visited) vertices and a list of 'members'.
 class Pazy::Accumulator
   include Pazy::Enumerable
