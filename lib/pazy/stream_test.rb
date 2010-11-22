@@ -132,10 +132,6 @@ puts "The accumulated products of the numbers from 1 to 10:"
 puts Stream.from(1).products.take(10).to_s
 puts
 
-puts "The first 15 Fibonacci numbers as an array:"
-puts fibonacci.arrays.take(14).last.inspect
-puts
-
 puts "The first 12 Fibonacci numbers with running positions:"
 puts fibonacci.combine(Stream.from(0)) { |x, i| "#{i}: #{x}" }.take(12).to_s
 puts
