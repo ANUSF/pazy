@@ -11,7 +11,7 @@ end
 class Stream
   def initialize(first, &rest)
     @first = first
-    @rest = suspend &rest
+    @rest = if rest then suspend &rest else lambda { nil } end
   end
 
   def first; @first; end
@@ -116,33 +116,37 @@ end
 
 fibonacci = Stream.new(0) { Stream.new(1) { fibonacci.rest + fibonacci } }
 
+puts "Stream.new(1) { Stream.new(2) }:"
+puts Stream.new(1) { Stream.new(2) }
+puts
+
 puts "The first 100 Fibonacci numbers:"
-puts fibonacci.take(100).to_s
+puts fibonacci.take(100)
 puts
 
 puts "The Fibonacci numbers between and 1000 and 100000:"
-puts fibonacci.drop_while { |n| n < 1000 }.take_while { |n| n < 100000 }.to_s
+puts fibonacci.drop_while { |n| n < 1000 }.take_while { |n| n < 100000 }
 puts
 
 puts "The squares of the number from 101 to 110:"
-puts Stream.from(1).drop(100).map { |n| n * n }.take(10).to_s
+puts Stream.from(1).drop(100).map { |n| n * n }.take(10)
 puts
 
 puts "The accumulated products of the numbers from 1 to 10:"
-puts Stream.from(1).products.take(10).to_s
+puts Stream.from(1).products.take(10)
 puts
 
 puts "The first 12 Fibonacci numbers with running positions:"
-puts fibonacci.combine(Stream.from(0)) { |x, i| "#{i}: #{x}" }.take(12).to_s
+puts fibonacci.combine(Stream.from(0)) { |x, i| "#{i}: #{x}" }.take(12)
 puts
 
 puts "The same merged into a single sequence:"
-puts Stream.from(0).merge(fibonacci).take(24).to_s
+puts Stream.from(0).merge(fibonacci).take(24)
 puts
 
 puts "The concatenation of the two streams:"
-puts Stream.from(0).take(12).concat(fibonacci.take(12)).to_s
+puts Stream.from(0).take(12).concat(fibonacci.take(12))
 puts
 
 puts "A consecutive sequence of four-letter words:"
-puts Stream.from('hazy').take(12).to_s
+puts Stream.from('hazy').take(12)
