@@ -82,7 +82,6 @@ class Stream
 
   def sums; accumulate(0, &:+) end
   def products; accumulate(1, &:*) end
-  def arrays; accumulate([], &:<<) end
 
   def merge(other)
     Stream.new(self.first) { other.merge(self.rest) if other }
