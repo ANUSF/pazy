@@ -58,9 +58,9 @@ class Stream
 
   def select(&pred)
     if pred.call(first)
-      Stream.new(first) { rest.filter(&pred) if rest }
+      Stream.new(first) { rest.select(&pred) if rest }
     elsif rest
-      rest.filter(&pred)
+      rest.select(&pred)
     end
   end
 
@@ -114,11 +114,11 @@ class Stream
 end
 
 
-fibonacci = Stream.new(0) { Stream.new(1) { fibonacci.rest + fibonacci } }
-
-puts "Stream.new(1) { Stream.new(2) }:"
+puts "A stream with just the numbers 1 and 2:"
 puts Stream.new(1) { Stream.new(2) }
 puts
+
+fibonacci = Stream.new(0) { Stream.new(1) { fibonacci.rest + fibonacci } }
 
 puts "The first 100 Fibonacci numbers:"
 puts fibonacci.take(100)
@@ -148,5 +148,10 @@ puts "The concatenation of the two streams:"
 puts Stream.from(0).take(12).concat(fibonacci.take(12))
 puts
 
-puts "A consecutive sequence of four-letter words:"
-puts Stream.from('hazy').take(12)
+puts "The first 10 even fibonacci numbers:"
+puts fibonacci.select { |n| n % 2 == 0 }.take(10)
+puts
+
+puts "The largest Fibonacci number under 1,000,000:"
+puts fibonacci.take_while { |n| n < 1000000 }.last
+puts
