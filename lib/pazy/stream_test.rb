@@ -17,9 +17,11 @@ class Stream
   def first; @first; end
   def rest; @rest.call; end
 
-  def self.from(start)
-    new(start) { from(start.next) }
+  def self.iterate(start, &step)
+    new(start) { self.iterate(step.call(start), &step) }
   end
+
+  def self.from(start); self.iterate(start, &:next) end
 
   def take_while(&pred)
     Stream.new(first) { rest.take_while(&pred) if rest } if pred.call(first)
@@ -86,7 +88,23 @@ class Stream
     Stream.new(self.first) { other.merge(self.rest) if other }
   end
 
+  def concat(other)
+    if rest
+      Stream.new(first) { rest.concat(other) }
+    else
+      Stream.new(first) { other }
+    end
+  end
+
   # CAUTION: don't call the following methods on an infinite stream.
+  def last
+    stream = self
+    while stream.rest
+      stream = stream.rest
+    end
+    stream.first
+  end
+
   def to_a
     stream = self
     results = []
@@ -120,7 +138,7 @@ puts Stream.from(1).products.take(10).to_s
 puts
 
 puts "The first 15 Fibonacci numbers as an array:"
-puts fibonacci.arrays.get(14).inspect
+puts fibonacci.arrays.take(14).last.inspect
 puts
 
 puts "The first 12 Fibonacci numbers with running positions:"
@@ -129,6 +147,10 @@ puts
 
 puts "The same merged into a single sequence:"
 puts Stream.from(0).merge(fibonacci).take(24).to_s
+puts
+
+puts "The concatenation of the two streams:"
+puts Stream.from(0).take(12).concat(fibonacci.take(12)).to_s
 puts
 
 puts "A consecutive sequence of four-letter words:"
