@@ -89,11 +89,7 @@ class Stream
   end
 
   def concat(other)
-    if rest
-      Stream.new(first) { rest.concat(other) }
-    else
-      Stream.new(first) { other }
-    end
+    Stream.new(first) { if rest then rest.concat(other) else other end }
   end
 
   # CAUTION: don't call the following methods on an infinite stream.
