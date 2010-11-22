@@ -21,16 +21,29 @@ class Stream
     new(start) { from(start.next) }
   end
 
+  def take_while(&pred)
+    Stream.new(first) { rest.take_while(&pred) if rest } if pred.call(first)
+  end
+
   def take(n)
     Stream.new(first) { rest.take(n-1) if rest } if n > 0
   end
 
-  def drop(n)
-    if n > 0
-      rest.drop(n-1) if rest
-    else
-      self
+  def drop_while(&pred)
+    stream = self
+    while stream and pred.call(stream.first)
+      stream = stream.rest
     end
+    stream
+  end
+
+  def drop(n)
+    stream = self
+    n.times {
+      break unless stream
+      stream = stream.rest
+    }
+    stream
   end
 
   def get(n)
@@ -46,18 +59,6 @@ class Stream
       Stream.new(first) { rest.filter(&pred) if rest }
     elsif rest
       rest.filter(&pred)
-    end
-  end
-
-  def take_while(&pred)
-    Stream.new(first) { rest.take_while(&pred) if rest } if pred.call(first)
-  end
-
-  def drop_while(&pred)
-    if pred.call(first)
-      rest.drop_while(&pred) if rest
-    else
-      self
     end
   end
 
