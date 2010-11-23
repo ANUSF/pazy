@@ -1,21 +1,29 @@
-def suspend(&code)
-  force = lambda do
-    val = code.call
-    force = lambda { val }
-    val
-  end
-  lambda { force.call }
-end
-
-
 class Stream
   def initialize(first, &rest)
     @first = first
-    @rest = if rest then suspend &rest else lambda { nil } end
+    if rest.is_a? Proc
+      @rest = rest
+    else
+      force_rest(rest)
+    end
   end
 
-  def first; @first; end
-  def rest; @rest.call; end
+  def first
+    @first
+  end
+
+  private
+
+  def force_rest(val)
+    class << self; self end.class_eval { define_method(:rest) { val } }
+    val
+  end
+
+  public
+
+  def rest
+    force_rest(@rest.call)
+  end
 
   def self.iterate(start, &step)
     new(start) { self.iterate(step.call(start), &step) }
@@ -160,6 +168,6 @@ def test(p); lambda { |n| n % p != 0 } end
 def sieve(s); Stream.new(s.first) { sieve(s.rest.select &test(s.first)) } end
 primes = sieve(Stream.from(2))
 
-puts "The prime numbers between 100 and 200:"
-puts primes.drop_while { |n| n < 100 }.take_while { |n| n < 200 }
+puts "The prime numbers between 1000 and 1100:"
+puts primes.drop_while { |n| n < 1000 }.take_while { |n| n < 1100 }
 puts()
