@@ -155,3 +155,11 @@ puts
 puts "The largest Fibonacci number under 1,000,000:"
 puts fibonacci.take_while { |n| n < 1000000 }.last
 puts
+
+def test(p); lambda { |n| n % p != 0 } end
+def sieve(s); Stream.new(s.first) { sieve(s.rest.select &test(s.first)) } end
+primes = sieve(Stream.from(2))
+
+puts "The prime numbers between 100 and 200:"
+puts primes.drop_while { |n| n < 100 }.take_while { |n| n < 200 }
+puts()
