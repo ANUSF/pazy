@@ -99,6 +99,14 @@ class Stream
     Stream.new(first) { if rest then rest.concat(other) else other end }
   end
 
+  def flat_map(&func)
+    if rest
+      func.call(first).concat(rest.flat_map(&func))
+    else
+      func.call(first)
+    end
+  end
+
   # CAUTION: don't call the following methods on an infinite stream.
   def last
     stream = self
@@ -170,4 +178,8 @@ primes = sieve(Stream.from(2))
 
 puts "The prime numbers between 1000 and 1100:"
 puts primes.drop_while { |n| n < 1000 }.take_while { |n| n < 1100 }
+puts()
+
+puts "flatMap test:"
+puts Stream.from(1).take(9).flat_map { |n| Stream.from(n * 100).take(10) }
 puts()
